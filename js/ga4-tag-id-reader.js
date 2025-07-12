@@ -5,12 +5,15 @@
 //
 //   <b>GA4 ID:</b> <span id="console-ga4-tag-id">waiting …</span>
 
+// Wait for DOMContentLoaded so #console-ga4-tag-id exists even if this
+// script is loaded in <head> without the "defer" attribute.
 (function () {
-  const OUTPUT_EL = document.getElementById('console-ga4-tag-id');
-  if (!OUTPUT_EL) {
-    console.warn('[ga4-tag-id-reader] Element #console-ga4-tag-id not found');
-    return;
-  }
+  const init = () => {
+    const OUTPUT_EL = document.getElementById('console-ga4-tag-id');
+    if (!OUTPUT_EL) {
+      console.warn('[ga4-tag-id-reader] Element #console-ga4-tag-id not found');
+      return;
+    }
 
   const dl = window.dataLayer = window.dataLayer || [];
 
@@ -40,4 +43,11 @@
     }
     lastIndex = dl.length;
   }, 100);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
